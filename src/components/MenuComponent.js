@@ -9,6 +9,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 
+// function RenderMenuItem (props) {}
 function RenderMenuItem({ dish, onClick }) {
   return (
     <Card>
@@ -22,15 +23,20 @@ function RenderMenuItem({ dish, onClick }) {
   );
 }
 
+// function Menu (props) {}
 const Menu = (props) => {
+  // map (JS keyword): iterating over every dish in the dishes array here
   const menu = props.dishes.map((dish) => {
     return (
+      // key: every item require key attribute to specift it.
+      // the key helps React to recognise each one of these elements, uniquely.
       <div key={dish.id} className="col-12 col-md-5 m-1">
         <RenderMenuItem dish={dish} onClick={props.onClick} />
       </div>
     );
-  });
+  }); // take the JS objects
 
+  // return what needs to diaplay on the UI in this conponent. (return view)
   return (
     <div className="container">
       <div className="row">

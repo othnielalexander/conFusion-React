@@ -5,6 +5,7 @@ import Footer from "./FooterComponent";
 import Home from "./HomeComponent";
 import DishDetail from "./DishdetailComponent";
 import Contact from "./ContactComponent";
+import About from "./AboutComponent";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { DISHES } from "../shared/dishes";
 import { COMMENTS } from "../shared/comments";
@@ -57,6 +58,11 @@ class Main extends Component {
           <Route path="/home" component={Homepage} />
           <Route
             exact
+            path="/aboutus"
+            component={() => <About leaders={this.state.leaders} />}
+          />
+          <Route
+            exact
             path="/menu"
             component={() => <Menu dishes={this.state.dishes} />}
           />
@@ -71,3 +77,6 @@ class Main extends Component {
 }
 
 export default Main;
+
+/* <Redirect to="/Home" /> this is a default path. anything doesn't match Home or Menu, 
+will be returned to Home */
