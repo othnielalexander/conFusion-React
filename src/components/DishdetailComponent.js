@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Card,
   CardImg,
@@ -7,8 +7,151 @@ import {
   CardTitle,
   Breadcrumb,
   BreadcrumbItem,
+  Button,
+  Col,
+  Row,
+  Label,
+  Modal,
+  ModalHeader,
+  ModalBody,
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import { Control, LocalForm, Errors } from "react-redux-form";
+
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !val || val.length <= len;
+const minLength = (len) => (val) => val && val.length >= len;
+
+class CommentForm extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isModalOpen: false,
+    };
+
+    this.toggleModal = this.toggleModal.bind(this);
+  }
+
+  handleSubmit(values) {
+    console.log("Current state is " + JSON.stringify(values));
+    alert("The current state is " + JSON.stringify(values));
+    // event.preventDefault(); // it will avoid going to some other page or Prevent a link from opening the URL
+  }
+
+  toggleModal() {
+    this.setState({
+      isModalOpen: !this.state.isModalOpen,
+    });
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+          <ModalHeader
+            toggle={
+              this.toggleModal
+            } /* The toggle here in the modal header shows the x sign on the top right */
+          >
+            Submit Comment
+          </ModalHeader>
+          <ModalBody>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+              <Row className="form-group">
+                <Label for="rating" md={12}>
+                  Rating
+                </Label>
+                <Col md={12}>
+                  <Control.select
+                    defaultValue="5"
+                    model=".rating"
+                    id="rating"
+                    name="rating"
+                    className="form-control"
+                  >
+                    {" "}
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </Control.select>
+                </Col>
+              </Row>
+
+              <Row className="form-group">
+                <Label for="name" md={12}>
+                  Your Name
+                </Label>
+
+                <Col md={12}>
+                  <Control.text
+                    model=".name"
+                    id="name"
+                    name="name"
+                    placeholder="Your Name"
+                    className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(3),
+                      maxLength: maxLength(15),
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".name"
+                    show="touched"
+                    messages={{
+                      required: "Required",
+                      minLength: "Must be greater than 2 characters",
+                      maxLength: "Must be 15 characters or less",
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="form-group">
+                <Label htmlFor="comment" md={12}>
+                  Comment
+                </Label>
+
+                <Col md={12}>
+                  <Control.textarea
+                    model=".comment"
+                    id="comment"
+                    name="comment"
+                    rows="8"
+                    className="form-control"
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".comment"
+                    show="touched"
+                    messages={{
+                      required: "Required",
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="form-group mt-3">
+                <Col md={{ size: 10 }}>
+                  <Button type="submit" color="primary">
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+            </LocalForm>
+          </ModalBody>
+        </Modal>
+        <Button outline onClick={this.toggleModal}>
+          <span className="fa fa-comment"></span> Submit Comment
+        </Button>
+      </React.Fragment>
+    );
+  }
+}
 
 // function RenderDish(props){}
 function RenderDish({ dish }) {
@@ -69,11 +212,11 @@ const DishDetail = (props) => {
       <div className="container">
         <div className="row">
           <Breadcrumb>
+            {/* <BreadcrumbItem><Link to="/home">Home</Link></BreadcrumbItem> */}
             <BreadcrumbItem>
-              {" "}
-              <Link to="home">Home</Link>{" "}
+              <Link to="/menu">Menu</Link>
             </BreadcrumbItem>
-            <BreadcrumbItem active>Menu</BreadcrumbItem>
+            <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
           </Breadcrumb>
           <div className="col-12">
             <h3>{props.dish.name}</h3>
@@ -83,6 +226,11 @@ const DishDetail = (props) => {
         <div className="row">
           <RenderDish dish={props.dish} />
           <RenderComments comments={props.comments} />
+        </div>
+        <div className="row">
+          <div className="col-6 ml-auto mt-2 mb-2">
+            <CommentForm />
+          </div>
         </div>
       </div>
     );
