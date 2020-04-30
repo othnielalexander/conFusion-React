@@ -31,12 +31,21 @@ class CommentForm extends Component {
     };
 
     this.toggleModal = this.toggleModal.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(values) {
     console.log("Current state is " + JSON.stringify(values));
-    alert("The current state is " + JSON.stringify(values));
-    // event.preventDefault(); // it will avoid going to some other page or Prevent a link from opening the URL
+    this.toggleModal();
+    this.props.addComment(
+      this.props.dishId,
+      values.rating,
+      values.author,
+      values.comment
+    );
+    console.log("This is addComment var" + this.props.addComment);
+    // alert("The current state is " + JSON.stringify(values));
+    // // event.preventDefault(); // it will avoid going to some other page or Prevent a link from opening the URL
   }
 
   toggleModal() {
@@ -48,6 +57,9 @@ class CommentForm extends Component {
   render() {
     return (
       <React.Fragment>
+        <Button outline onClick={this.toggleModal}>
+          <span className="fa fa-comment"></span> Submit Comment
+        </Button>
         <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
           <ModalHeader
             toggle={
@@ -87,9 +99,9 @@ class CommentForm extends Component {
 
                 <Col md={12}>
                   <Control.text
-                    model=".name"
-                    id="name"
-                    name="name"
+                    model=".author"
+                    id="author"
+                    name="author"
                     placeholder="Your Name"
                     className="form-control"
                     validators={{
@@ -100,7 +112,7 @@ class CommentForm extends Component {
                   />
                   <Errors
                     className="text-danger"
-                    model=".name"
+                    model=".author"
                     show="touched"
                     messages={{
                       required: "Required",
@@ -145,9 +157,6 @@ class CommentForm extends Component {
             </LocalForm>
           </ModalBody>
         </Modal>
-        <Button outline onClick={this.toggleModal}>
-          <span className="fa fa-comment"></span> Submit Comment
-        </Button>
       </React.Fragment>
     );
   }
@@ -173,31 +182,30 @@ function RenderDish({ dish }) {
 }
 
 // function RenderComments(props){}
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
   if (comments != null) {
-    const cmnts = comments.map((commnts) => {
-      return (
-        <ul key={commnts.id} className="list-unstyled">
-          <li>
-            <p> {commnts.comment} </p>
-            <p>
-              {" "}
-              -- {commnts.author}, &nbsp;
-              {new Intl.DateTimeFormat("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-              }).format(new Date(Date.parse(commnts.date)))}
-            </p>
-          </li>
-        </ul>
-      );
-    });
-
     return (
       <div className="col-12 col-md-5 m-1">
-        <h4> Comments </h4>
-        {cmnts}
+        <h4>Comments</h4>
+        <ul className="list-unstyled">
+          {comments.map((comment) => {
+            return (
+              <li key={comment.id}>
+                <p> {comment.comment} </p>
+                <p>
+                  {" "}
+                  -- {comment.author}, &nbsp;
+                  {new Intl.DateTimeFormat("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  }).format(new Date(Date.parse(comment.date)))}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+        <CommentForm dishId={dishId} addComment={addComment} />
       </div>
     );
     // if comments is empty
@@ -225,12 +233,11 @@ const DishDetail = (props) => {
         </div>
         <div className="row">
           <RenderDish dish={props.dish} />
-          <RenderComments comments={props.comments} />
-        </div>
-        <div className="row">
-          <div className="col-6 ml-auto mt-2 mb-2">
-            <CommentForm />
-          </div>
+          <RenderComments
+            comments={props.comments}
+            addComment={props.addComment}
+            dishId={props.dish.id}
+          />
         </div>
       </div>
     );

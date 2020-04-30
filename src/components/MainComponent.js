@@ -8,6 +8,7 @@ import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import { addComment } from "../redux/ActionCreators";
 
 const mapStatetoProps = (state) => {
   return {
@@ -17,6 +18,11 @@ const mapStatetoProps = (state) => {
     leaders: state.leaders,
   };
 };
+
+const mapDispatchtoProps = (dispatch) => ({
+  addComment: (dishId, rating, author, comment) =>
+    dispatch(addComment(dishId, rating, author, comment)),
+}); // we are using the function addComment to dispatch
 
 class Main extends Component {
   constructor(props) {
@@ -45,6 +51,7 @@ class Main extends Component {
           comments={this.props.comments.filter(
             (comment) => comment.dishId === parseInt(match.params.dishId, 10)
           )}
+          addComment={this.props.addComment}
         />
       );
     };
@@ -74,7 +81,7 @@ class Main extends Component {
   }
 }
 
-export default withRouter(connect(mapStatetoProps)(Main));
+export default withRouter(connect(mapStatetoProps, mapDispatchtoProps)(Main));
 
 /* <Redirect to="/Home" /> this is a default path. anything doesn't match Home or Menu, 
 will be returned to Home */
