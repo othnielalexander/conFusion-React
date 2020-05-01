@@ -10,14 +10,11 @@ export const Comments = (state = { errMess: null, comments: [] }, action) => {
       };
 
     case ActionTypes.COMMENTS_FAILED:
-      return { ...state, errMess: action.payload };
+      return { ...state, isLoading: false, errMess: action.payload };
 
     case ActionTypes.ADD_COMMENT:
       var comment = action.payload;
-      comment.id = state.length;
-      comment.date = new Date().toISOString();
-      console.log("Comment: ", comment);
-      return state.concat(comment);
+      return { ...state, comment: state.comments.concat(comment) };
 
     default:
       return state;
