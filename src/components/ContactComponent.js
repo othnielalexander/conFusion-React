@@ -26,6 +26,16 @@ class Contact extends Component {
   handleSubmit(values) {
     console.log("Current state is " + JSON.stringify(values));
     alert("The current state is " + JSON.stringify(values));
+    this.props.postFeedback(
+      values.firstname,
+      values.lastname,
+      values.telnum,
+      values.email,
+      values.agree,
+      values.contactType,
+      values.message
+    );
+    console.log("This is postComment var" + this.props.postFeedback);
     this.props.resetFeedbackForm();
     // event.preventDefault(); // it will avoid going to some other page or Prevent a link from opening the URL
   }
